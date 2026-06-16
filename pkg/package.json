@@ -1,0 +1,15 @@
+{
+  "name": "web-yapo",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "web_yapo_bg.wasm",
+    "web_yapo.js",
+    "web_yapo.d.ts"
+  ],
+  "main": "web_yapo.js",
+  "types": "web_yapo.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

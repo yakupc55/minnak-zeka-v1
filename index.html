@@ -1,0 +1,1559 @@
+<!doctype html>
+<html lang="tr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>🧠 Minnak Zeka - Eğlenceli Yapay Zeka</title>
+        <style>
+            body {
+                background: linear-gradient(135deg, #fff5f5, #f0f7ff);
+                font-family: "Fredoka One", "Nunito", "Segoe UI", sans-serif;
+                color: #4a4a4a;
+                margin: 0;
+                padding: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+            }
+
+            .container {
+                width: 95%;
+                max-width: 1000px;
+                height: 85vh;
+                background: white;
+                border-radius: 24px;
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+                border: 4px solid #ffe3e3;
+                display: grid;
+                grid-template-columns: 320px 1fr;
+                overflow: hidden;
+                transition: all 0.3s ease;
+            }
+
+            /* Sidebar settings panel with cute accents */
+            .sidebar {
+                background-color: #fff9f9;
+                border-right: 4px solid #ffe3e3;
+                padding: 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                overflow-y: auto;
+            }
+
+            .sidebar h2 {
+                margin: 0 0 10px 0;
+                color: #ff6b6b;
+                font-size: 22px;
+                text-align: center;
+            }
+
+            .status-badge {
+                background-color: #ffd8d8;
+                color: #ff4d4d;
+                padding: 8px 12px;
+                border-radius: 20px;
+                font-weight: bold;
+                font-size: 12px;
+                text-align: center;
+                animation: bounce 2s infinite;
+            }
+
+            .control-block {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .control-block label {
+                font-size: 13px;
+                font-weight: bold;
+                color: #7a7a7a;
+            }
+
+            .control-block input,
+            .control-block select,
+            .control-block textarea {
+                border: 2px solid #ffd8d8;
+                border-radius: 12px;
+                padding: 8px 12px;
+                font-size: 13px;
+                outline: none;
+                background-color: white;
+                transition: all 0.2s;
+            }
+
+            .control-block select:focus {
+                border-color: #ff6b6b;
+            }
+
+            /* Responsive Popup Modal */
+            .modal-backdrop {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(4px);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            }
+
+            .modal-content {
+                background: white;
+                border-radius: 20px;
+                width: 90%;
+                max-width: 700px;
+                max-height: 80vh;
+                border: 4px solid #ffe3e3;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            .modal-header {
+                padding: 15px 20px;
+                background-color: #fff9f9;
+                border-bottom: 2px solid #ffe3e3;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .modal-header h3 {
+                margin: 0;
+                color: #ff6b6b;
+                font-size: 18px;
+            }
+
+            .modal-close-btn {
+                background: none;
+                border: none;
+                font-size: 20px;
+                color: #7a7a7a;
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+
+            .modal-close-btn:hover {
+                color: #ff6b6b;
+            }
+
+            .modal-body {
+                padding: 20px;
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            /* Dialogue Editor Table */
+            .table-container {
+                border: 2px solid #ffd8d8;
+                border-radius: 12px;
+                max-height: 300px;
+                overflow-y: auto;
+                background-color: #fffdfd;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                font-size: 12px;
+            }
+
+            th {
+                background-color: #ffeef2;
+                color: #ff6b6b;
+                font-weight: bold;
+                padding: 10px;
+                text-align: left;
+                border-bottom: 2px solid #ffd8d8;
+                position: sticky;
+                top: 0;
+            }
+
+            td {
+                padding: 10px;
+                border-bottom: 1px solid #ffeef2;
+                max-width: 250px;
+                white-space: normal;
+                word-wrap: break-word;
+            }
+
+            .delete-row-btn {
+                background-color: #ef4444;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 4px 8px;
+                cursor: pointer;
+                font-weight: bold;
+            }
+
+            .delete-row-btn:hover {
+                background-color: #dc2626;
+            }
+
+            /* Dialogue add-row layout */
+            .add-row-form {
+                background-color: #fff9f9;
+                padding: 15px;
+                border-radius: 14px;
+                border: 2px dashed #ffd8d8;
+                display: grid;
+                grid-template-columns: 1fr 1fr auto;
+                gap: 10px;
+                align-items: end;
+            }
+
+            .add-row-form input {
+                border: 2px solid #ffd8d8;
+                border-radius: 8px;
+                padding: 8px 12px;
+                font-size: 12px;
+                outline: none;
+            }
+
+            .btn {
+                background-color: #ff6b6b;
+                color: white;
+                border: none;
+                padding: 12px;
+                border-radius: 14px;
+                font-size: 14px;
+                font-weight: bold;
+                cursor: pointer;
+                transition: all 0.2s;
+                text-align: center;
+                box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+            }
+
+            .btn:hover {
+                background-color: #ff4d4d;
+                transform: translateY(-2px);
+            }
+
+            .btn-green {
+                background-color: #2ec4b6;
+                box-shadow: 0 4px 10px rgba(46, 196, 182, 0.2);
+            }
+
+            .btn-green:hover {
+                background-color: #20a497;
+            }
+
+            .btn-icon {
+                background: none;
+                border: none;
+                font-size: 20px;
+                cursor: pointer;
+                transition:
+                    transform 0.2s ease,
+                    opacity 0.2s ease;
+                padding: 4px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .btn-icon:hover {
+                transform: scale(1.15);
+                opacity: 0.85;
+            }
+
+            /* Playful interactive area */
+            .workspace,
+            .store-panel {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+                overflow: hidden; /* Fix layout overflowing bottom of workspace */
+            }
+
+            .store-panel {
+                display: none; /* Hidden by default on desktop, toggled via nav */
+            }
+
+            /* Desktop View state triggers */
+            .container.show-store .workspace {
+                display: none;
+            }
+            .container.show-store .store-panel {
+                display: flex;
+            }
+
+            .container.show-chat .workspace {
+                display: flex;
+            }
+            .container.show-chat .store-panel {
+                display: none;
+            }
+
+            .header-bar {
+                padding: 15px 20px;
+                background-color: #f7f9ff;
+                border-bottom: 2px solid #eef2ff;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-bar h1 {
+                margin: 0;
+                font-size: 20px;
+                color: #3a86ff;
+            }
+
+            /* Conversational Area */
+            .chat-flow {
+                flex: 1;
+                padding: 20px;
+                overflow-y: auto;
+                background-color: #fcfdff;
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                min-height: 0; /* Enable shrinking and scroll within viewport bounds */
+            }
+
+            .chat-bubble {
+                max-width: 75%;
+                padding: 10px 16px;
+                border-radius: 18px;
+                font-size: 14px;
+                line-height: 1.5;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+                box-sizing: border-box;
+                word-wrap: break-word;
+                word-break: break-all;
+                overflow-wrap: break-word;
+            }
+
+            .chat-bubble.user {
+                background-color: #3a86ff;
+                color: white;
+                align-self: flex-end;
+                border-bottom-right-radius: 4px;
+            }
+
+            .chat-bubble.bot {
+                background-color: #ffeef2;
+                color: #4a4a4a;
+                align-self: flex-start;
+                border-bottom-left-radius: 4px;
+                border: 1px solid #ffd8d8;
+            }
+
+            /* Chat inputs box */
+            .chat-footer {
+                padding: 15px 20px;
+                background-color: white;
+                border-top: 2px solid #f0f3ff;
+                display: flex;
+                gap: 10px;
+                flex-shrink: 0; /* Keep input section pinned and visible */
+            }
+
+            .chat-input {
+                flex: 1;
+                border: 2px solid #dbe4ff;
+                border-radius: 14px;
+                padding: 12px 18px;
+                font-size: 14px;
+                outline: none;
+                transition: all 0.2s;
+            }
+
+            .chat-input:focus {
+                border-color: #3a86ff;
+            }
+
+            /* Mobile Bottom Tab Navigation Styles */
+            .bottom-nav {
+                display: none; /* Hidden on desktop viewports by default */
+                background-color: white;
+                border-top: 2px solid #ffe3e3;
+                height: 65px;
+                grid-column: span 2;
+                justify-content: space-around;
+                align-items: center;
+                position: relative;
+                z-index: 100;
+            }
+
+            /* Show bottom nav on desktop too to switch between Chat and Store easily */
+            @media (min-width: 769px) {
+                .bottom-nav {
+                    display: flex;
+                    grid-column: 2; /* Spans across workspace/store column */
+                    height: 55px;
+                    border-top: 2px solid #f0f3ff;
+                }
+                .container {
+                    grid-template-rows: 1fr auto;
+                }
+                #nav-btn-panel {
+                    display: none; /* Pinned left column on desktop makes this button redundant */
+                }
+            }
+
+            .nav-item {
+                background: none;
+                border: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                color: #7a7a7a;
+                font-size: 20px;
+                cursor: pointer;
+                flex: 1;
+                height: 100%;
+                transition: all 0.2s ease;
+                gap: 3px;
+            }
+
+            .nav-item .nav-label {
+                font-size: 11px;
+                font-weight: bold;
+            }
+
+            .nav-item.active {
+                color: #ff6b6b;
+            }
+
+            @keyframes bounce {
+                0%,
+                100% {
+                    transform: translateY(0);
+                }
+                50% {
+                    transform: translateY(-5px);
+                }
+            }
+
+            /* 📱 RESPONSIVE MOBILE ACCENTS */
+            @media (max-width: 768px) {
+                body {
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+
+                .container {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: 1fr auto; /* Keep space for bottom tab bar */
+                    width: 100%;
+                    height: 100vh; /* Full height application feel on mobile */
+                    border-radius: 0;
+                    border: none;
+                }
+
+                /* Responsive container state switcher */
+                .container.show-panel .sidebar {
+                    display: flex;
+                }
+                .container.show-panel .workspace,
+                .container.show-panel .store-panel {
+                    display: none;
+                }
+
+                .container.show-store .sidebar,
+                .container.show-store .workspace {
+                    display: none;
+                }
+                .container.show-store .store-panel {
+                    display: flex;
+                }
+
+                .container.show-chat .sidebar,
+                .container.show-chat .store-panel {
+                    display: none;
+                }
+                .container.show-chat .workspace {
+                    display: flex;
+                }
+
+                .sidebar {
+                    border-right: none;
+                    height: 100%;
+                    max-height: none;
+                    padding: 15px;
+                }
+
+                .sidebar h2 {
+                    font-size: 18px;
+                }
+
+                .header-bar h1 {
+                    font-size: 16px;
+                }
+
+                .chat-bubble {
+                    max-width: 85%;
+                    font-size: 13px;
+                    padding: 8px 12px;
+                }
+
+                .add-row-form {
+                    grid-template-columns: 1fr;
+                    gap: 8px;
+                }
+
+                .modal-content {
+                    width: 95%;
+                }
+
+                .bottom-nav {
+                    display: flex; /* Visible strictly on mobile devices */
+                    grid-column: span 1;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container show-chat">
+            <!-- Cute parameters panel -->
+            <div class="sidebar">
+                <h2>🧠 Minnak Zeka</h2>
+
+                <!-- Mascot Image Placement -->
+                <div style="text-align: center; margin-bottom: 5px">
+                    <img
+                        src="minnak.png"
+                        alt="Mascot"
+                        style="
+                            max-width: 130px;
+                            height: auto;
+                            border-radius: 16px;
+                            border: 3px solid #ffe3e3;
+                            box-shadow: 0 6px 15px rgba(255, 107, 107, 0.1);
+                        "
+                    />
+                </div>
+
+                <div id="status" class="status-badge">WASM Yükleniyor...</div>
+
+                <!-- Training status / step / loss container permanently visible in Sidebar -->
+                <div
+                    id="train-info"
+                    style="
+                        font-size: 13px;
+                        font-weight: bold;
+                        color: #ff6b6b;
+                        text-align: center;
+                        background-color: #ffeef2;
+                        padding: 8px 12px;
+                        border-radius: 20px;
+                        border: 2px solid #ffd8d8;
+                    "
+                >
+                    Adım: 0 | Kayıp: -
+                </div>
+
+                <!-- Single simplified dropdown config selector -->
+                <div class="control-block">
+                    <label for="cfg-preset">Zeka Kapasitesi (Hazır Ayar)</label>
+                    <select id="cfg-preset">
+                        <option value="light">Hafif / Hızlı ⚡</option>
+                        <option value="medium" selected>
+                            Orta / Standart 🧠
+                        </option>
+                        <option value="deep">Gelişmiş / Derin 🚀</option>
+                    </select>
+                </div>
+
+                <!-- POPUP TRIGGER BUTTON -->
+                <button
+                    class="btn"
+                    id="btn-open-modal"
+                    style="
+                        background-color: #3a86ff;
+                        box-shadow: 0 4px 10px rgba(58, 134, 255, 0.2);
+                    "
+                >
+                    📂 Eğitim Verilerini Düzenle
+                </button>
+
+                <div style="display: flex; gap: 8px">
+                    <button
+                        class="btn btn-green"
+                        id="btn-save-data"
+                        style="flex: 1; font-size: 11px; padding: 6px"
+                    >
+                        📥 Veriyi İndir
+                    </button>
+                    <input
+                        type="file"
+                        id="data-upload"
+                        accept=".txt"
+                        style="display: none"
+                    />
+                    <button
+                        class="btn"
+                        id="btn-load-data"
+                        style="flex: 1; font-size: 11px; padding: 6px"
+                        onclick="document.getElementById('data-upload').click()"
+                    >
+                        📤 Veri Yükle
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: 8px">
+                    <button
+                        class="btn btn-green"
+                        id="btn-save-model"
+                        style="flex: 1; font-size: 11px; padding: 6px"
+                    >
+                        📥 Modeli İndir
+                    </button>
+                    <input
+                        type="file"
+                        id="model-upload"
+                        accept=".yapo"
+                        style="display: none"
+                    />
+                    <button
+                        class="btn"
+                        id="btn-load-model"
+                        style="flex: 1; font-size: 11px; padding: 6px"
+                        onclick="
+                            document.getElementById('model-upload').click()
+                        "
+                    >
+                        📤 Model Yükle
+                    </button>
+                </div>
+
+                <button class="btn btn-green" id="btn-init">
+                    🎯 Modeli Hazırla / Sıfırla
+                </button>
+                <button class="btn" id="btn-train">▶ Eğitimi Başlat</button>
+
+                <!-- Application Info Card inside Sidebar -->
+                <div
+                    style="
+                        background-color: #fff0f2;
+                        border: 1px dashed #ffb3b3;
+                        border-radius: 12px;
+                        padding: 12px;
+                        font-size: 11px;
+                        color: #6a6a6a;
+                        margin-top: 10px;
+                        line-height: 1.4;
+                    "
+                >
+                    <strong
+                        style="
+                            color: #ff6b6b;
+                            font-size: 12px;
+                            display: block;
+                            margin-bottom: 4px;
+                        "
+                        >ℹ️ Minnak Zeka Rehberi</strong
+                    >
+                    • Sol tarafta yer alan bu panelden modelinizi hazırlayabilir
+                    ve eğitimi başlatabilirsiniz.<br />
+                    • <strong>Uygulama Mağazası</strong> sekmesinden yapay
+                    zekaya dilediğiniz yetenekleri (Rastgele Sayı vb.)
+                    kazandırabilirsiniz.<br />
+                    • <strong>Sohbet</strong> sekmesinden gerçek zamanlı olarak
+                    eğittiğiniz yapay zeka ile diyalog kurabilirsiniz.
+                </div>
+            </div>
+
+            <!-- Chat Workspace -->
+            <div class="workspace">
+                <div class="header-bar">
+                    <h1>💬 Sohbet Akışı</h1>
+                    <div style="display: flex; align-items: center; gap: 12px">
+                        <button
+                            class="btn-icon"
+                            id="btn-clear-chat"
+                            title="Sohbeti Temizle"
+                        >
+                            🧹
+                        </button>
+                        <button
+                            class="btn-icon"
+                            id="btn-open-settings"
+                            title="Sohbet Ayarları"
+                        >
+                            ⚙️
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Conversational Messages Container -->
+                <div id="chat-box" class="chat-flow">
+                    <div class="chat-bubble bot">
+                        Merhaba! Ben Minnak Zeka. Beni eğitip sevimli sohbetler
+                        yapmaya ne dersiniz? 💖
+                    </div>
+                </div>
+
+                <!-- Input area with parameter helpers -->
+                <div
+                    style="
+                        display: flex;
+                        flex-direction: column;
+                        gap: 6px;
+                        width: 100%;
+                    "
+                >
+                    <div style="display: flex; gap: 8px; padding: 0 20px">
+                        <button
+                            class="btn"
+                            id="btn-helper-hash"
+                            style="
+                                padding: 6px 12px;
+                                font-size: 12px;
+                                background-color: #ffeef2;
+                                color: #ff6b6b;
+                                border: 1px solid #ffd8d8;
+                                box-shadow: none;
+                            "
+                        >
+                            🔢 Sayı Parametresi (#)
+                        </button>
+                        <button
+                            class="btn"
+                            id="btn-helper-quote"
+                            style="
+                                padding: 6px 12px;
+                                font-size: 12px;
+                                background-color: #ffeef2;
+                                color: #ff6b6b;
+                                border: 1px solid #ffd8d8;
+                                box-shadow: none;
+                            "
+                        >
+                            🔤 Kelime Parametresi (#"")
+                        </button>
+                    </div>
+                    <div class="chat-footer">
+                        <input
+                            type="text"
+                            id="chat-prompt"
+                            class="chat-input"
+                            placeholder="Minnak Zeka'ya bir mesaj gönderin..."
+                        />
+                        <button class="btn" id="btn-send" style="width: 80px">
+                            Gönder
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Program and Data Store Panel -->
+            <div class="store-panel">
+                <div class="header-bar">
+                    <h1 style="color: #ff6b6b">🛒 Uygulama & Veri Mağazası</h1>
+                </div>
+                <div
+                    id="store-apps-container"
+                    style="
+                        flex: 1;
+                        padding: 20px;
+                        overflow-y: auto;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 15px;
+                    "
+                >
+                    <!-- App cards injected dynamically via Javascript -->
+                </div>
+            </div>
+
+            <!-- Sleek App Bottom Navigation Panel -->
+            <div class="bottom-nav">
+                <button
+                    class="nav-item"
+                    id="nav-btn-panel"
+                    onclick="switchMobileTab('panel')"
+                >
+                    <span>🤖</span>
+                    <span class="nav-label">Zeka Paneli</span>
+                </button>
+                <button
+                    class="nav-item"
+                    id="nav-btn-store"
+                    onclick="switchMobileTab('store')"
+                >
+                    <span>🛒</span>
+                    <span class="nav-label">Uygulama Mağazası</span>
+                </button>
+                <button
+                    class="nav-item active"
+                    id="nav-btn-chat"
+                    onclick="switchMobileTab('chat')"
+                >
+                    <span>💬</span>
+                    <span class="nav-label">Sohbet</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- DIALOGUE DATASET POPUP MODAL -->
+        <div id="dataset-modal" class="modal-backdrop">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>📂 Eğitim Diyalog Tablosu</h3>
+                    <button class="modal-close-btn" id="btn-close-modal">
+                        ❌
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-container">
+                        <table id="dialogue-table">
+                            <thead>
+                                <tr>
+                                    <th>Kullanıcı (User)</th>
+                                    <th>Bot Yanıtı (Bot)</th>
+                                    <th style="width: 40px; text-align: center">
+                                        İşlem
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="dialogue-tbody">
+                                <!-- Dialogue rows injected dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Dialogue Add Form -->
+                    <div class="add-row-form">
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                gap: 4px;
+                            "
+                        >
+                            <label style="font-size: 11px; font-weight: bold"
+                                >Kullanıcı Prompt:</label
+                            >
+                            <input
+                                type="text"
+                                id="new-user-text"
+                                placeholder="Kullanıcı mesajı..."
+                            />
+                        </div>
+                        <div
+                            style="
+                                display: flex;
+                                flex-direction: column;
+                                gap: 4px;
+                            "
+                        >
+                            <label style="font-size: 11px; font-weight: bold"
+                                >Bot Cevabı:</label
+                            >
+                            <input
+                                type="text"
+                                id="new-bot-text"
+                                placeholder="Bot yanıtı..."
+                            />
+                        </div>
+                        <button
+                            class="btn btn-green"
+                            id="btn-add-dialogue"
+                            style="font-size: 12px; padding: 10px 15px"
+                        >
+                            ➕ Ekle
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHAT SETTINGS POPUP MODAL -->
+        <div id="settings-modal" class="modal-backdrop">
+            <div class="modal-content" style="max-width: 400px">
+                <div class="modal-header">
+                    <h3>⚙️ Sohbet Ayarları</h3>
+                    <button class="modal-close-btn" id="btn-close-settings">
+                        ❌
+                    </button>
+                </div>
+                <div class="modal-body" style="gap: 15px">
+                    <div class="control-block">
+                        <label for="cfg-max-tokens"
+                            >Maksimum Token Uzunluğu (Max Token)</label
+                        >
+                        <input
+                            type="number"
+                            id="cfg-max-tokens"
+                            value="512"
+                            min="1"
+                            max="2048"
+                            step="1"
+                        />
+                    </div>
+                    <div class="control-block">
+                        <label for="cfg-temperature"
+                            >Sıcaklık (Temperature:
+                            <span id="temp-val">0.4</span>)</label
+                        >
+                        <input
+                            type="range"
+                            id="cfg-temperature"
+                            min="0.05"
+                            max="2.0"
+                            step="0.05"
+                            value="0.4"
+                            style="width: 100%"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="module">
+            import {
+                bootstrap,
+                initEngine,
+                trainStep,
+                startResponseStream,
+                getEngine,
+            } from "./minnak_train.js";
+            import { longSampleDataset } from "./sample.js";
+            import { appRegistry } from "./apps_store.js";
+
+            let activeTraining = false;
+
+            // Structured dataset loaded from standard sample.js
+            let dialogueDataset = [...longSampleDataset];
+            let installedAppIds = new Set();
+
+            async function start() {
+                renderTable();
+                renderStore();
+
+                await bootstrap((status) => {
+                    if (status === "ready") {
+                        document.getElementById("status").innerText =
+                            "Minnak Zeka Hazır! ✨";
+                        document.getElementById(
+                            "status",
+                        ).style.backgroundColor = "#d4edda";
+                        document.getElementById("status").style.color =
+                            "#155724";
+                        reinit();
+                    }
+                });
+
+                loopTraining();
+            }
+
+            // Helper regex extraction for programmatic parameter parsing
+            function extractNplParams(promptText) {
+                const re = /(#\d+)|(#"([^"]*)")/g;
+                const params = [];
+                let match;
+                while ((match = re.exec(promptText)) !== null) {
+                    if (match[1]) {
+                        params.push(match[1].substring(1)); // strip '#'
+                    } else if (match[3]) {
+                        params.push(match[3]);
+                    }
+                }
+                return params;
+            }
+
+            // High Performance Programmatic App Parser and Dynamic Executor
+            async function processAppExecution(
+                generatedText,
+                extractedParams,
+                activeApps,
+            ) {
+                let tempText = generatedText;
+
+                // Define parameter mapping based on extracted parameters
+                const paramValues = {};
+                extractedParams.forEach((param, index) => {
+                    paramValues[`param${index + 1}`] = param;
+                });
+
+                // Find dynamic call markers: #app#[app_id]#[args]#
+                // We use a regex that matches `#app#` then app_id, then `#` then arguments, then `#`
+                const appRegex = /#app#([a-zA-Z0-9_]+)#([^#]*)#/g;
+                const matches = [...tempText.matchAll(appRegex)];
+
+                for (const m of matches) {
+                    const fullMatch = m[0];
+                    const appName = m[1].trim();
+                    const argsStr = m[2];
+
+                    const app = activeApps.find((a) => a.id === appName);
+                    if (app) {
+                        try {
+                            // Resolve each argument cleanly using our paramValues map
+                            const rawArgs = argsStr
+                                .split(",")
+                                .map((s) => s.trim());
+                            const resolvedArgs = rawArgs.map((arg) => {
+                                // Extract numeric part from argument string (e.g. "param1" or "#param1#" -> "param1")
+                                const cleanArg = arg.replace(
+                                    /[^a-zA-Z0-9]/g,
+                                    "",
+                                );
+                                return paramValues[cleanArg] || arg;
+                            });
+
+                            const appResult = await app.execute(resolvedArgs);
+
+                            // The output parameter key corresponds to args.length + 1
+                            const outputKey = `#param${resolvedArgs.length + 1}#`;
+                            let resolvedVal = "";
+                            if (appResult[outputKey]) {
+                                resolvedVal = appResult[outputKey];
+                            } else {
+                                const keys = Object.keys(appResult).sort();
+                                resolvedVal =
+                                    appResult[keys[keys.length - 1]] || "";
+                            }
+
+                            tempText = tempText.replace(fullMatch, resolvedVal);
+                        } catch (e) {
+                            console.error("App execution failed", e);
+                            tempText = tempText.replace(fullMatch, "");
+                        }
+                    } else {
+                        tempText = tempText.replace(fullMatch, "");
+                    }
+                }
+
+                // Now that all app blocks are resolved, replace general text param notations
+                extractedParams.forEach((param, index) => {
+                    const num = index + 1;
+                    tempText = tempText.replaceAll(`#param${num}#`, param);
+                    tempText = tempText.replaceAll(`#param${num}`, param);
+                    tempText = tempText.replaceAll(`param${num}`, param);
+                });
+
+                // Clean up any stray/incomplete app tag fragments during streaming safely
+                if (tempText.includes("#app#")) {
+                    const indexOfHash = tempText.indexOf("#app#");
+                    const rest = tempText.substring(indexOfHash);
+                    const endHash = rest.indexOf("#", 5);
+                    if (endHash === -1) {
+                        tempText = tempText.substring(0, indexOfHash);
+                    }
+                }
+
+                return tempText;
+            }
+
+            // Render Program and Data Store Panel View
+            function renderStore() {
+                const container = document.getElementById(
+                    "store-apps-container",
+                );
+                container.innerHTML = "";
+
+                appRegistry.forEach((app) => {
+                    const isInstalled = installedAppIds.has(app.id);
+                    const card = document.createElement("div");
+                    card.style.cssText =
+                        "background: white; border: 2px solid #ffd8d8; border-radius: 16px; padding: 15px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.02);";
+
+                    card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                        <h3 style="margin: 0; color: #ff6b6b; font-size: 16px;">${app.name}</h3>
+                        <button class="btn" style="font-size: 11px; padding: 6px 12px; background-color: ${isInstalled ? "#ef4444" : "#2ec4b6"}" onclick="toggleInstallApp('${app.id}')">
+                            ${isInstalled ? "🗑 Mağazadan Kaldır" : "➕ Mağazadan Ekle"}
+                        </button>
+                    </div>
+                    <p style="margin: 0; font-size: 12px; color: #7a7a7a;">${app.description}</p>
+                    <div style="font-size: 11px; background-color: #fff9f9; padding: 8px; border-radius: 8px; border: 1px dashed #ffd8d8; font-family: monospace; color: #555;">
+                        <strong>Örnek Diyaloglar:</strong><br>
+                        ${app.trainingData.map((t) => `• U: ${t.user}<br>• B: ${t.bot}`).join("<br>")}
+                    </div>
+                `;
+                    container.appendChild(card);
+                });
+            }
+
+            // Handle install and uninstall actions with training loop sync
+            window.toggleInstallApp = function (appId) {
+                const app = appRegistry.find((a) => a.id === appId);
+                if (!app) return;
+
+                if (installedAppIds.has(appId)) {
+                    installedAppIds.delete(appId);
+                    // Filter out app training dialogue data
+                    dialogueDataset = dialogueDataset.filter((row) => {
+                        return !app.trainingData.some(
+                            (t) => t.user === row.user,
+                        );
+                    });
+                } else {
+                    installedAppIds.add(appId);
+                    // Append app training dialogue data
+                    dialogueDataset.push(...app.trainingData);
+                }
+
+                renderStore();
+                renderTable();
+                reinit();
+            };
+
+            // Mobile Switch Tab Navigation Controller
+            window.switchMobileTab = function (target) {
+                const container = document.querySelector(".container");
+                const navItems = document.querySelectorAll(
+                    ".bottom-nav .nav-item",
+                );
+
+                navItems.forEach((item) => item.classList.remove("active"));
+
+                if (target === "panel") {
+                    container.classList.remove("show-chat", "show-store");
+                    container.classList.add("show-panel");
+                    document
+                        .getElementById("nav-btn-panel")
+                        .classList.add("active");
+                } else if (target === "store") {
+                    container.classList.remove("show-panel", "show-chat");
+                    container.classList.add("show-store");
+                    document
+                        .getElementById("nav-btn-store")
+                        .classList.add("active");
+                } else if (target === "chat") {
+                    container.classList.remove("show-panel", "show-store");
+                    container.classList.add("show-chat");
+                    document
+                        .getElementById("nav-btn-chat")
+                        .classList.add("active");
+
+                    // Keep the flow auto-scroll synced
+                    setTimeout(() => {
+                        const chatBox = document.getElementById("chat-box");
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }, 50);
+                }
+            };
+
+            function renderTable() {
+                const tbody = document.getElementById("dialogue-tbody");
+                tbody.innerHTML = "";
+
+                dialogueDataset.forEach((row, index) => {
+                    const tr = document.createElement("tr");
+
+                    const tdUser = document.createElement("td");
+                    tdUser.innerText = row.user;
+
+                    const tdBot = document.createElement("td");
+                    tdBot.innerText = row.bot;
+
+                    const tdAction = document.createElement("td");
+                    tdAction.style.textAlign = "center";
+                    const btnDelete = document.createElement("button");
+                    btnDelete.className = "delete-row-btn";
+                    btnDelete.innerText = "🗑";
+                    btnDelete.onclick = () => {
+                        dialogueDataset.splice(index, 1);
+                        renderTable();
+                        reinit();
+                    };
+                    tdAction.appendChild(btnDelete);
+
+                    tr.appendChild(tdUser);
+                    tr.appendChild(tdBot);
+                    tr.appendChild(tdAction);
+                    tbody.appendChild(tr);
+                });
+            }
+
+            function buildFormattedCorpus() {
+                return dialogueDataset
+                    .map((row) => {
+                        return `<|user|> ${row.user} <|end|> <|bot|> ${row.bot} <|end|>`;
+                    })
+                    .join("\n");
+            }
+
+            function reinit() {
+                const presetKey = document.getElementById("cfg-preset").value;
+                initEngine(presetKey, buildFormattedCorpus(), false);
+                lossHistoryCleared();
+            }
+
+            function lossHistoryCleared() {
+                document.getElementById("train-info").innerText =
+                    `Adım: 0 | Kayıp: -`;
+            }
+
+            // Run training steps iteratively yielding to browser scheduler to eliminate Console [Violation] warnings
+            async function loopTraining() {
+                while (true) {
+                    if (activeTraining) {
+                        await trainStep(1, (epoch, loss) => {
+                            document.getElementById("train-info").innerText =
+                                `Adım: ${epoch} | Kayıp: ${loss.toFixed(5)}`;
+                        });
+                    }
+                    await new Promise((resolve) =>
+                        setTimeout(resolve, activeTraining ? 1 : 100),
+                    );
+                }
+            }
+
+            // Modal Controls
+            const modal = document.getElementById("dataset-modal");
+            document
+                .getElementById("btn-open-modal")
+                .addEventListener("click", () => {
+                    modal.style.display = "flex";
+                });
+            document
+                .getElementById("btn-close-modal")
+                .addEventListener("click", () => {
+                    modal.style.display = "none";
+                });
+
+            // Chat Settings Modal Controls
+            const settingsModal = document.getElementById("settings-modal");
+            document
+                .getElementById("btn-open-settings")
+                .addEventListener("click", () => {
+                    settingsModal.style.display = "flex";
+                });
+            document
+                .getElementById("btn-close-settings")
+                .addEventListener("click", () => {
+                    settingsModal.style.display = "none";
+                });
+
+            window.addEventListener("click", (e) => {
+                if (e.target === modal) {
+                    modal.style.display = "none";
+                }
+                if (e.target === settingsModal) {
+                    settingsModal.style.display = "none";
+                }
+            });
+
+            // Temperature display update
+            const tempInput = document.getElementById("cfg-temperature");
+            const tempVal = document.getElementById("temp-val");
+            tempInput.addEventListener("input", () => {
+                tempVal.innerText = tempInput.value;
+            });
+
+            // Chat Reset functionality
+            document
+                .getElementById("btn-clear-chat")
+                .addEventListener("click", () => {
+                    const chatBox = document.getElementById("chat-box");
+                    chatBox.innerHTML =
+                        '<div class="chat-bubble bot">Sohbet sıfırlandı! Yeni bir mesaj yazarak devam edebilirsiniz. 💖</div>';
+                });
+
+            // Helper buttons to easily inject parameter notations into input
+            const chatPrompt = document.getElementById("chat-prompt");
+            document
+                .getElementById("btn-helper-hash")
+                .addEventListener("click", () => {
+                    const start = chatPrompt.selectionStart;
+                    const end = chatPrompt.selectionEnd;
+                    const text = chatPrompt.value;
+                    chatPrompt.value =
+                        text.substring(0, start) + "#" + text.substring(end);
+                    chatPrompt.selectionStart = chatPrompt.selectionEnd =
+                        start + 1;
+                    chatPrompt.focus();
+                });
+
+            document
+                .getElementById("btn-helper-quote")
+                .addEventListener("click", () => {
+                    const start = chatPrompt.selectionStart;
+                    const end = chatPrompt.selectionEnd;
+                    const text = chatPrompt.value;
+                    chatPrompt.value =
+                        text.substring(0, start) + '#""' + text.substring(end);
+                    chatPrompt.selectionStart = chatPrompt.selectionEnd =
+                        start + 2; // place cursor inside the quotes
+                    chatPrompt.focus();
+                });
+
+            // Direct actions bindings
+            document
+                .getElementById("btn-init")
+                .addEventListener("click", reinit);
+            document
+                .getElementById("cfg-preset")
+                .addEventListener("change", reinit);
+
+            // Add dialogue row manually
+            document
+                .getElementById("btn-add-dialogue")
+                .addEventListener("click", () => {
+                    const userIn = document.getElementById("new-user-text");
+                    const botIn = document.getElementById("new-bot-text");
+                    const userText = userIn.value.trim();
+                    const botText = botIn.value.trim();
+
+                    if (userText && botText) {
+                        dialogueDataset.push({ user: userText, bot: botText });
+                        userIn.value = "";
+                        botIn.value = "";
+                        renderTable();
+                        reinit();
+                    }
+                });
+
+            document
+                .getElementById("btn-train")
+                .addEventListener("click", () => {
+                    activeTraining = !activeTraining;
+                    const btn = document.getElementById("btn-train");
+                    if (activeTraining) {
+                        btn.innerText = "🛑 Eğitimi Durdur";
+                        btn.style.backgroundColor = "#ff4d4d";
+                        document.getElementById("status").innerText =
+                            "Öğreniyor... 🧠✨";
+                        document.getElementById(
+                            "status",
+                        ).style.backgroundColor = "#fff3cd";
+                        document.getElementById("status").style.color =
+                            "#856404";
+                    } else {
+                        btn.innerText = "▶ Eğitimi Başlat";
+                        btn.style.backgroundColor = "#ff6b6b";
+                        document.getElementById("status").innerText =
+                            "Öğrenim Duraklatıldı 💖";
+                        document.getElementById(
+                            "status",
+                        ).style.backgroundColor = "#ffd8d8";
+                        document.getElementById("status").style.color =
+                            "#ff4d4d";
+                    }
+                });
+
+            const processChat = async () => {
+                const promptInput = document.getElementById("chat-prompt");
+                const text = promptInput.value.trim();
+                if (!text) return;
+
+                // User Bubble
+                appendBubble(text, "user");
+                promptInput.value = "";
+
+                const maxTokens =
+                    parseInt(document.getElementById("cfg-max-tokens").value) ||
+                    512;
+                const temp =
+                    parseFloat(
+                        document.getElementById("cfg-temperature").value,
+                    ) || 0.4;
+
+                // Append initial empty bot bubble
+                const chatBox = document.getElementById("chat-box");
+                const bubble = document.createElement("div");
+                bubble.className = "chat-bubble bot";
+                bubble.innerText = "...";
+                chatBox.appendChild(bubble);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+                const activeApps = appRegistry.filter((app) =>
+                    installedAppIds.has(app.id),
+                );
+                const extractedParams = extractNplParams(text);
+
+                // Start real-time response stream
+                const engine = startResponseStream(text);
+                if (!engine) {
+                    bubble.innerText = "Önce model hazırlamalısınız!";
+                    return;
+                }
+
+                let generatedText = "";
+
+                // Step by step prediction loop yielding every tick to keep 60 FPS
+                for (let i = 0; i < maxTokens; i++) {
+                    await new Promise((resolve) => setTimeout(resolve, 0));
+
+                    const word = engine.stream_step(temp);
+                    if (!word) {
+                        break;
+                    }
+
+                    generatedText += word;
+
+                    // Stop loop immediately if any stop sequence appears inside accumulated text
+                    if (
+                        generatedText.includes("<|end|>") ||
+                        generatedText.includes("<|user|>") ||
+                        generatedText.includes("<|bot|>")
+                    ) {
+                        const stopTags = ["<|end|>", "<|user|>", "<|bot|>"];
+                        for (const tag of stopTags) {
+                            const idx = generatedText.indexOf(tag);
+                            if (idx !== -1) {
+                                generatedText = generatedText.substring(0, idx);
+                            }
+                        }
+
+                        let renderedText = await processAppExecution(
+                            generatedText,
+                            extractedParams,
+                            activeApps,
+                        );
+                        bubble.innerText = renderedText.trim() || "...";
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                        break; // Early break stops Wasm computation instantly to save CPU energy
+                    }
+
+                    // Perform NPL App Parameter Substitution & App Execution in Real-time
+                    let renderedText = await processAppExecution(
+                        generatedText,
+                        extractedParams,
+                        activeApps,
+                    );
+                    bubble.innerText = renderedText.trim() || "...";
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                }
+
+                if (!generatedText.trim()) {
+                    bubble.innerText = "Düşünüyor...";
+                }
+            };
+
+            function appendBubble(text, sender) {
+                const chatBox = document.getElementById("chat-box");
+                const bubble = document.createElement("div");
+                bubble.className = `chat-bubble ${sender}`;
+                bubble.innerText = text;
+                chatBox.appendChild(bubble);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+            document
+                .getElementById("btn-send")
+                .addEventListener("click", processChat);
+            document
+                .getElementById("chat-prompt")
+                .addEventListener("keydown", (e) => {
+                    if (e.key === "Enter") processChat();
+                });
+
+            // Conversational dataset download trigger
+            document
+                .getElementById("btn-save-data")
+                .addEventListener("click", () => {
+                    const text = buildFormattedCorpus();
+                    const blob = new Blob([text], {
+                        type: "text/plain;charset=utf-8",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "minnak_dataset.txt";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+
+            // Conversational dataset upload trigger
+            document
+                .getElementById("data-upload")
+                .addEventListener("change", (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function (evt) {
+                        const rawText = evt.target.result;
+                        const newDataset = [];
+
+                        const lines = rawText.split("\n");
+                        lines.forEach((line) => {
+                            const uStart = line.indexOf("<|user|>");
+                            const uEnd = line.indexOf("<|end|>");
+                            const bStart = line.indexOf("<|bot|>");
+                            const bEnd = line.lastIndexOf("<|end|>");
+
+                            if (
+                                uStart !== -1 &&
+                                uEnd !== -1 &&
+                                bStart !== -1 &&
+                                bEnd !== -1
+                            ) {
+                                const userPart = line
+                                    .substring(uStart + 8, uEnd)
+                                    .trim();
+                                const botPart = line
+                                    .substring(bStart + 7, bEnd)
+                                    .trim();
+                                newDataset.push({
+                                    user: userPart,
+                                    bot: botPart,
+                                });
+                            }
+                        });
+
+                        if (newDataset.length > 0) {
+                            dialogueDataset = newDataset;
+                            renderTable();
+                            reinit();
+                        } else {
+                            alert(
+                                "Veri yüklenemedi. Dosya geçerli <|user|> ... <|end|> ... yapısında olmalıdır.",
+                            );
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+
+            // Save model weights trigger - Quantized to 8-bit precision by default (value: 2)
+            document
+                .getElementById("btn-save-model")
+                .addEventListener("click", () => {
+                    const engine = getEngine();
+                    if (!engine) return;
+                    const bytes = engine.save_model_bytes(2); // Quantized to 8-bit precision
+                    const blob = new Blob([bytes], {
+                        type: "application/octet-stream",
+                    });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "minnak_model_8bit.yapo";
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+
+            // Load model weights trigger
+            document
+                .getElementById("model-upload")
+                .addEventListener("change", (e) => {
+                    const file = e.target.files[0];
+                    const engine = getEngine();
+                    if (!file || !engine) return;
+                    const reader = new FileReader();
+                    reader.onload = function (evt) {
+                        const bytes = new Uint8Array(evt.target.result);
+                        const success = engine.load_model_bytes(bytes);
+                        if (success) {
+                            alert(
+                                "Sevimli Minnak model başarıyla yüklendi! 💖",
+                            );
+                            lossHistoryCleared();
+                        } else {
+                            alert("Model yüklenemedi. Uyumsuz dosya biçimi.");
+                        }
+                    };
+                    reader.readAsArrayBuffer(file);
+                });
+
+            // Bootstrap execution
+            start();
+        </script>
+    </body>
+</html>
